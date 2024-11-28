@@ -6,7 +6,7 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install all dependencies (including dev)
 RUN npm install
 
 # Copy project files
@@ -24,9 +24,8 @@ WORKDIR /app
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/dist ./dist
 
-# Install production dependencies and vite globally
-RUN npm install --production && \
-    npm install -g vite
+# Install all dependencies
+RUN npm install
 
 # Expose the port
 EXPOSE 3000
