@@ -1,17 +1,22 @@
 {
-  "name": "skiddys-project",
+  "name": "skiddy",
   "services": {
-    "web": {
-      "image": "local",
-      "dockerfile": "./Dockerfile",
+    "skiddy": {
+      "image": "ghcr.io/rizo8107/skiddy:main",
+      "domains": ["skiddy.9dto0s.easypanel.host"],
       "ports": {
-        "8090": "http"
+        "3000": "http"
       },
       "env": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "VITE_POCKETBASE_URL": "https://skiddy-pocketbase.9dto0s.easypanel.host"
       },
-      "resources": {
-        "memory": 512
+      "mounts": {
+        "data": "/app/data"
+      },
+      "deploy": {
+        "command": "npm start",
+        "port": 3000
       }
     }
   }
