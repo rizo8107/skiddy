@@ -1,12 +1,13 @@
 import React from 'react';
-import { FileDown, FileText, Github, Book } from 'lucide-react';
+import { FileDown, FileText, Github, Book, Link as LinkIcon } from 'lucide-react';
 
 interface Resource {
   id: string;
   title: string;
-  type: 'download' | 'documentation' | 'github' | 'guide';
+  type: 'download' | 'documentation' | 'github' | 'guide' | 'link';
   url: string;
   size?: string;
+  description?: string;
 }
 
 const mockResources: Resource[] = [
@@ -34,6 +35,13 @@ const mockResources: Resource[] = [
     title: 'Setup Guide',
     type: 'guide',
     url: '#'
+  },
+  {
+    id: '5',
+    title: 'Additional Resources',
+    type: 'link',
+    url: '#',
+    description: 'External learning materials'
   }
 ];
 
@@ -41,7 +49,16 @@ const iconMap = {
   download: FileDown,
   documentation: FileText,
   github: Github,
-  guide: Book
+  guide: Book,
+  link: LinkIcon
+};
+
+const typeLabels = {
+  download: 'Download',
+  documentation: 'View Docs',
+  github: 'View Code',
+  guide: 'Read Guide',
+  link: 'Visit Link'
 };
 
 export const ProjectResources: React.FC = () => {
@@ -55,6 +72,8 @@ export const ProjectResources: React.FC = () => {
             <a
               key={resource.id}
               href={resource.url}
+              target={resource.type === 'link' ? '_blank' : undefined}
+              rel={resource.type === 'link' ? 'noopener noreferrer' : undefined}
               className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors group"
             >
               <div className="flex items-center gap-3">
@@ -66,10 +85,13 @@ export const ProjectResources: React.FC = () => {
                   {resource.size && (
                     <p className="text-xs text-gray-400 mt-0.5">{resource.size}</p>
                   )}
+                  {resource.description && (
+                    <p className="text-xs text-gray-400 mt-0.5">{resource.description}</p>
+                  )}
                 </div>
               </div>
               <span className="text-xs text-gray-400 group-hover:text-blue-400">
-                {resource.type === 'download' ? 'Download' : 'View'}
+                {typeLabels[resource.type]}
               </span>
             </a>
           );

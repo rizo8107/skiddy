@@ -101,25 +101,25 @@ export const CourseReviews: React.FC = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-white">Course Reviews</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+        <h2 className="text-2xl font-semibold text-white/95 mb-3 sm:mb-0">Course Reviews</h2>
         <div className="flex items-center gap-2">
           <div className="flex gap-1">
             {renderStars(parseFloat(getAverageRating()))}
           </div>
-          <span className="text-gray-400">({getAverageRating()})</span>
+          <span className="text-white/60">({getAverageRating()})</span>
         </div>
       </div>
       
       {/* Review Form */}
-      <form onSubmit={handleSubmitReview} className="bg-gray-700/50 rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Write a Review</h3>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex gap-1" onMouseLeave={() => setHoveredRating(0)}>
+      <form onSubmit={handleSubmitReview} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-4 sm:p-6 mb-6">
+        <h3 className="text-lg font-semibold text-white/90 mb-4">Write a Review</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
+          <div className="flex gap-2" onMouseLeave={() => setHoveredRating(0)}>
             {renderStars(rating, true)}
           </div>
           {rating > 0 && (
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-white/60">
               {rating === 5 ? 'Excellent!' : rating === 4 ? 'Very Good' : rating === 3 ? 'Good' : rating === 2 ? 'Fair' : 'Poor'}
             </span>
           )}
@@ -128,14 +128,13 @@ export const CourseReviews: React.FC = () => {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Share your thoughts about this course..."
-          className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          rows={3}
+          className="w-full px-4 py-3 rounded-lg bg-white/5 text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 border border-white/10 focus:border-white/20 transition-colors min-h-[100px]"
           required
         />
         <button
           type="submit"
           disabled={rating === 0 || !comment.trim()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-4 w-full sm:w-auto px-6 py-2.5 bg-indigo-500/80 hover:bg-indigo-500/90 text-white/95 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Submit Review
         </button>
@@ -144,17 +143,17 @@ export const CourseReviews: React.FC = () => {
       {/* Review List */}
       <div className="space-y-4">
         {reviews.map((review) => (
-          <div key={review.id} className="bg-gray-700/50 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
+          <div key={review.id} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3">
               <div>
-                <h3 className="text-white font-medium">{review.author}</h3>
+                <h3 className="text-white/90 font-medium">{review.author}</h3>
                 <div className="flex items-center gap-1 mt-1">
                   {renderStars(review.rating)}
                 </div>
               </div>
-              <span className="text-sm text-gray-400">{review.date}</span>
+              <span className="text-sm text-white/50 order-first sm:order-last">{review.date}</span>
             </div>
-            <p className="text-gray-300 text-sm mt-2">{review.comment}</p>
+            <p className="text-white/70 text-sm mt-3 leading-relaxed">{review.comment}</p>
           </div>
         ))}
       </div>

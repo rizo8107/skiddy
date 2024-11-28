@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { courseService, isAuthenticated } from '../lib/pocketbase';
+import { courseService, isAuthenticated, pb, isAdmin } from '../lib/pocketbase';
 import { useQuery } from '@tanstack/react-query';
 import { Navigation } from '../components/Navigation';
+import { Loader2, Image as ImageIcon, ArrowRight } from 'lucide-react';
 
 export default function CoursePage() {
   const navigate = useNavigate();
@@ -22,12 +23,12 @@ export default function CoursePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e]">
         <Navigation />
         <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading courses...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-500 mx-auto" />
+            <p className="mt-2 text-white/70">Loading courses...</p>
           </div>
         </div>
       </div>
@@ -36,23 +37,12 @@ export default function CoursePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e]">
         <Navigation />
         <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
           <div className="text-center">
-            <div className="text-red-600 dark:text-red-400 text-xl font-semibold mb-2">
-              {error instanceof Error && error.message === "Failed to fetch" 
-                ? "Unable to connect to the server. Please make sure the server is running."
-                : error instanceof Error && error.message.includes("403")
-                ? "You need to be logged in to view courses. Please log in and try again."
-                : "Error loading courses. Please try again later."}
-            </div>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
-            >
-              Try Again
-            </button>
+            <h2 className="text-xl font-semibold text-white">Error loading courses</h2>
+            <p className="mt-2 text-white/70">Please try again later</p>
           </div>
         </div>
       </div>
@@ -60,60 +50,153 @@ export default function CoursePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e]">
       <Navigation />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-            Available Courses
-          </h1>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-400 sm:mt-4">
-            Browse our selection of courses and start learning today
-          </p>
+        {/* Marketing Banner */}
+        <div className="mb-16 bg-gradient-to-r from-indigo-900 to-purple-900 rounded-2xl overflow-hidden">
+          <div className="relative px-6 py-12 sm:px-12 sm:py-16">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex-1 space-y-6">
+                <h2 className="text-3xl font-bold text-white">
+                  Master Cybersecurity Skills
+                </h2>
+                <p className="text-lg text-white/70">
+                  Join our comprehensive courses and learn from industry experts. Start your journey to becoming a cybersecurity professional today.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <button
+                    onClick={() => {
+                      const coursesSection = document.getElementById('courses');
+                      if (coursesSection) {
+                        coursesSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 text-base font-semibold text-white 
+                             bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-all duration-200"
+                  >
+                    Explore Courses
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => navigate('/about')}
+                    className="px-6 py-3 text-base font-semibold text-white/90 hover:text-white 
+                             bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200"
+                  >
+                    Learn More
+                  </button>
+                </div>
+              </div>
+              <div className="relative w-48 h-48 flex-shrink-0 hidden md:block">
+                <div className="absolute inset-0 bg-indigo-500/20 rounded-2xl transform rotate-6"></div>
+                <div className="absolute inset-0 bg-indigo-500/40 rounded-2xl -rotate-6 flex items-center justify-center">
+                  <span className="text-6xl">🔒</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {courses?.map((course) => (
-            <Link
-              to={`/course/${course.id}`}
-              key={course.id}
-              className="flex flex-col rounded-lg shadow-lg overflow-hidden bg-white dark:bg-gray-800 hover:shadow-xl transition-shadow"
-            >
-              {course.thumbnail && (
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-48 w-full object-cover"
-                    src={`http://127.0.0.1:8090/api/files/courses/${course.id}/${course.thumbnail}`}
-                    alt={course.title}
-                  />
-                </div>
-              )}
-              <div className="flex-1 p-6 flex flex-col justify-between">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
-                    {course.level}
-                  </p>
-                  <div className="block mt-2">
-                    <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                      {course.title}
-                    </p>
-                    <p className="mt-3 text-base text-gray-500 dark:text-gray-400">
+        {/* Course List Section */}
+        <div id="courses">
+          <div className="text-center">
+            <h1 className="text-3xl font-extrabold text-white sm:text-4xl">
+              {isAdmin() ? 'All Courses' : 'My Courses'}
+            </h1>
+            <p className="mt-3 max-w-2xl mx-auto text-xl text-white/70 sm:mt-4">
+              {isAdmin() 
+                ? 'Manage and view all available courses'
+                : 'Access your enrolled courses and continue learning'}
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {courses?.map((course) => (
+              <div
+                key={course.id}
+                className="relative flex flex-col rounded-lg shadow-lg overflow-hidden 
+                         bg-white dark:bg-gray-800 transition-all duration-200
+                         hover:shadow-xl"
+              >
+                <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
+                  <div className="p-6 space-y-4">
+                    <h1 className="text-2xl md:text-3xl font-medium text-white/95">
+                      {course.course_title}
+                    </h1>
+                    <p className="text-base text-white/70">
                       {course.description}
                     </p>
-                  </div>
-                </div>
-                <div className="mt-6">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        Duration: {course.duration}
-                      </span>
+                    <div className="flex flex-wrap gap-6 text-sm text-white/60 pt-2">
+                      {course.expand?.instructor && (
+                        <div className="flex items-center">
+                          <User className="w-4 h-4 mr-2 text-indigo-400/80" />
+                          <span>{course.expand.instructor.name}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-2 text-indigo-400/80" />
+                        <span>{course.duration} hours</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Signal className="w-4 h-4 mr-2 text-indigo-400/80" />
+                        <span className="capitalize">{course.level}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                <div className="flex-1 p-6 flex flex-col justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                        {course.level}
+                      </p>
+                      {!course.enabled && isAdmin() && (
+                        <span className="px-2 py-1 text-xs font-medium text-yellow-600 bg-yellow-100 rounded-full">
+                          Disabled
+                        </span>
+                      )}
+                    </div>
+                    <div className="block mt-2">
+                      <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                        {course.title}
+                      </p>
+                      <p className="mt-3 text-base text-gray-500 dark:text-gray-400">
+                        {course.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-6 flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Duration: {course.duration}
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        Instructor: {course.expand?.instructor?.username || 'Unknown'}
+                      </span>
+                    </div>
+                    <Link
+                      to={`/course/${course.id}`}
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 
+                               transition-colors duration-200 text-sm font-medium"
+                    >
+                      View Course
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </Link>
-          ))}
+            ))}
+
+            {(!courses || courses.length === 0) && (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">
+                  {isAdmin() 
+                    ? 'No courses have been created yet.'
+                    : 'You don\'t have access to any courses yet. Please contact an administrator for access.'}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

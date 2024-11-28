@@ -8,41 +8,33 @@ interface CourseHeaderProps {
 
 export function CourseHeader({ course }: CourseHeaderProps) {
   return (
-    <div className="bg-gray-800 rounded-lg p-6">
-      <div className="flex flex-col md:flex-row gap-6">
-        {course.thumbnail ? (
-          <img
-            src={course.thumbnail}
-            alt={course.course_title}
-            className="w-full md:w-64 h-48 object-cover rounded-lg bg-gray-700"
-          />
-        ) : (
-          <div className="w-full md:w-64 h-48 bg-gray-700 rounded-lg flex items-center justify-center">
-            <span className="text-gray-400">No thumbnail</span>
-          </div>
-        )}
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-white mb-2">
+    <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+      <div className="flex flex-col md:flex-row gap-8">
+      
+        <div className="flex-1 space-y-4">
+          <h1 className="text-2xl font-semibold text-white/95">
             {course.course_title}
           </h1>
-          <p className="text-gray-300 mb-4">{course.description}</p>
-          <div className="flex flex-wrap gap-4">
+          <p className="text-base text-white/70 leading-relaxed">
+            {course.description}
+          </p>
+          <div className="flex flex-wrap gap-6 pt-2">
             {course.duration && (
-              <div className="flex items-center text-gray-400">
-                <Clock className="w-4 h-4 mr-2" />
+              <div className="flex items-center text-white/60">
+                <Clock className="w-4 h-4 mr-2 text-indigo-400/80" />
                 <span>{course.duration}</span>
               </div>
             )}
             {course.level && (
-              <div className="flex items-center text-gray-400">
-                <Signal className="w-4 h-4 mr-2" />
-                <span>{course.level}</span>
+              <div className="flex items-center text-white/60">
+                <Signal className="w-4 h-4 mr-2 text-indigo-400/80" />
+                <span className="capitalize">{course.level}</span>
               </div>
             )}
             {course.instructor && (
-              <div className="flex items-center text-gray-400">
-                <BookOpen className="w-4 h-4 mr-2" />
-                <span>By {course.instructor}</span>
+              <div className="flex items-center text-white/60">
+                <BookOpen className="w-4 h-4 mr-2 text-indigo-400/80" />
+                <span>By {course.expand?.instructor?.username || 'Unknown'}</span>
               </div>
             )}
           </div>

@@ -1,79 +1,80 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { logout, pb } from '../lib/pocketbase';
+import { Logo } from './Logo';
+import { User, LogOut } from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 export function Navigation() {
   const navigate = useNavigate();
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const user = pb.authStore.model;
 
   const handleLogout = async () => {
-    await logout();
+    logout();
     navigate('/login');
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">LMS</span>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <a
-                href="/courses"
-                className="border-indigo-500 text-gray-900 dark:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+    <nav className="border-b border-white/10 bg-black/20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex items-center gap-8">
+            <Link to="/" className="flex items-center gap-2">
+              <Logo className="h-8 w-8" />
+            </Link>
+
+            <div className="hidden md:flex md:items-center md:gap-6">
+              <Link
+                to="/courses"
+                className="text-base text-white/70 hover:text-white/90 transition-colors duration-200"
               >
                 Courses
-              </a>
+              </Link>
             </div>
           </div>
 
-          <div className="flex items-center">
-            <div className="ml-3 relative">
-              <div>
+          <div className="flex items-center gap-4">
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
                 <button
-                  type="button"
-                  className="bg-white dark:bg-gray-800 rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  id="user-menu-button"
-                  aria-expanded="false"
-                  aria-haspopup="true"
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="relative h-10 w-10 rounded-full bg-black/20 border border-white/10 hover:border-indigo-500/50 
+                           transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
                 >
-                  <span className="sr-only">Open user menu</span>
-                  <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">
-                      {user?.email?.charAt(0).toUpperCase() || 'U'}
+                  <span className="flex h-full w-full items-center justify-center">
+                    <span className="text-lg font-medium text-white/90">
+                      {user?.name?.[0]?.toUpperCase() || 'N'}
                     </span>
-                  </div>
+                  </span>
                 </button>
-              </div>
+              </DropdownMenu.Trigger>
 
-              {isProfileOpen && (
-                <div
-                  className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="user-menu-button"
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  align="end"
+                  className="w-56 bg-black/90 backdrop-blur-sm border border-white/10 rounded-xl p-1 animate-in fade-in-0 zoom-in-95"
                 >
-                  <a
-                    href="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                    role="menuitem"
+                  <DropdownMenu.Item 
+                    onSelect={() => navigate('/profile')}
+                    className="flex items-center gap-3 px-3 py-2.5 text-base text-white/90 focus:text-white 
+                             hover:bg-white/5 focus:bg-white/5 rounded-lg cursor-pointer outline-none"
                   >
-                    Your Profile
-                  </a>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                    role="menuitem"
+                    <User className="w-5 h-5 text-indigo-400/80" />
+                    <span>Profile</span>
+                  </DropdownMenu.Item>
+
+                  <DropdownMenu.Separator className="my-1 border-t border-white/10" />
+
+                  <DropdownMenu.Item 
+                    onSelect={handleLogout}
+                    className="flex items-center gap-3 px-3 py-2.5 text-base text-white/90 focus:text-white 
+                             hover:bg-white/5 focus:bg-white/5 rounded-lg cursor-pointer outline-none"
                   >
-                    Sign out
-                  </button>
-                </div>
-              )}
-            </div>
+                    <LogOut className="w-5 h-5 text-indigo-400/80" />
+                    <span>Sign out</span>
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
         </div>
       </div>

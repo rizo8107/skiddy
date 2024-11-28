@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { LessonList } from '../components/LessonList';
 import { CourseHeader } from '../components/CourseHeader';
-import { CourseDetails } from '../components/CourseDetails';
+import { LessonDetails } from '../components/LessonDetails';
 import { ReviewList } from '../components/ReviewList';
 import { courseService, lessonService, Course, Lesson } from '../lib/pocketbase';
 import { Loader2 } from 'lucide-react';
@@ -34,29 +34,43 @@ export default function CourseDetailsPage() {
 
   if (!courseId) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">Course ID is required</div>
+      <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e] flex items-center justify-center">
+        <div className="text-center space-y-4 max-w-md mx-auto">
+          <h2 className="text-xl font-semibold text-white/90">Course ID Required</h2>
+          <p className="text-base text-white/70">Please provide a valid course ID to view the content.</p>
+          <button
+            onClick={() => navigate('/courses')}
+            className="text-indigo-400/90 hover:text-indigo-400 transition-colors"
+          >
+            Return to courses
+          </button>
+        </div>
       </div>
     );
   }
 
   if (isCourseLoading || isLessonsLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+      <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-8 h-8 text-indigo-500/90 animate-spin mx-auto" />
+          <p className="text-sm text-white/50">Loading course content...</p>
+        </div>
       </div>
     );
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Course not found</h2>
-          <p className="text-gray-400 mb-4">The course you're looking for doesn't exist or has been removed.</p>
+      <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e] flex items-center justify-center">
+        <div className="text-center space-y-4 max-w-md mx-auto">
+          <h2 className="text-xl font-semibold text-white/90">Course Not Found</h2>
+          <p className="text-base text-white/70">
+            The course you're looking for doesn't exist or has been removed.
+          </p>
           <button
             onClick={() => navigate('/courses')}
-            className="text-indigo-400 hover:text-indigo-300"
+            className="text-indigo-400/90 hover:text-indigo-400 transition-colors"
           >
             Return to courses
           </button>
@@ -66,40 +80,56 @@ export default function CourseDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e]">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <CourseHeader course={course} />
         
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+        <div className="mt-6 sm:mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 space-y-6">
             {currentLesson ? (
               <>
-                <VideoPlayer
-                  lessons_title={currentLesson.lessons_title}
-                  videoUrl={currentLesson.videoUrl}
-                />
-                <div className="mt-6 bg-gray-800 rounded-lg p-6">
-                  <h2 className="text-xl font-semibold text-white mb-2">
-                    {currentLesson.lessons_title}
-                  </h2>
-                  <p className="text-gray-300">{currentLesson.description}</p>
+                <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
+                  <VideoPlayer
+                    lessons_title={currentLesson.lessons_title}
+                    videoUrl={currentLesson.videoUrl}
+                  />
                 </div>
               </>
             ) : (
-              <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
-                <p className="text-gray-400">Select a lesson to start learning</p>
+              <div className="aspect-video bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl 
+                           flex items-center justify-center">
+                <p className="text-sm sm:text-base text-white/50">Select a lesson to start learning</p>
               </div>
             )}
-            <CourseDetails course={course} />
+            
+            {/* Lesson List for Mobile */}
+            <div className="lg:hidden bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl">
+              <LessonList
+                lessons={lessons}
+                currentLesson={currentLesson}
+                onSelectLesson={setCurrentLesson}
+              />
+            </div>
+            
+            <LessonDetails lesson={currentLesson} />
           </div>
           
-          <div className="lg:col-span-1 space-y-6">
-            <LessonList
-              lessons={lessons}
-              currentLesson={currentLesson}
-              onSelectLesson={setCurrentLesson}
-            />
-            <ReviewList courseId={course.id} />
+          {/* Sidebar */}
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 sm:gap-8">
+              {/* Lesson List for Desktop */}
+              <div className="hidden lg:block bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl">
+                <LessonList
+                  lessons={lessons}
+                  currentLesson={currentLesson}
+                  onSelectLesson={setCurrentLesson}
+                />
+              </div>
+              <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl">
+                <ReviewList courseId={course.id} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
