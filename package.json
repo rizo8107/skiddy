@@ -1,13 +1,14 @@
 {
-  "name": "skiddy-tamil",
+  "name": "modern-lms-platform",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --port 3000 --host",
+    "start": "vite preview --host --port 3000",
     "lint": "eslint .",
+    "preview": "vite preview --host --port 3000",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -49,7 +50,7 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
-    "vite": "^4.4.9"
+    "vite": "^4.3.8"
   },
   "eslintConfig": {
     "extends": [
