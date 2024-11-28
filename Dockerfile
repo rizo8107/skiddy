@@ -20,16 +20,15 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy built assets from build stage
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/backend ./backend
+# Copy package files and built assets
 COPY --from=build /app/package*.json ./
+COPY --from=build /app/dist ./dist
 
 # Install production dependencies only
 RUN npm install --production
 
 # Expose the port
-EXPOSE 8090
+EXPOSE 3000
 
 # Start the application
 CMD ["npm", "start"]
