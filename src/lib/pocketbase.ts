@@ -536,6 +536,9 @@ export const login = async (email: string, password: string) => {
     try {
         const authData = await pb.collection('users').authWithPassword(email, password);
         
+        // Wait for auth store to be updated
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         if (!pb.authStore.isValid) {
             throw new Error('Authentication failed');
         }

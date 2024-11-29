@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { pb, login } from '../lib/pocketbase';
 import { Loader2, Mail } from 'lucide-react';
@@ -10,6 +10,13 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check if user is already authenticated
+  useEffect(() => {
+    if (pb.authStore.isValid) {
+      navigate('/courses', { replace: true });
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -18,8 +25,9 @@ export default function LoginPage() {
     try {
       await login(email, password);
       
+      // Double check auth state after login
       if (pb.authStore.isValid) {
-        navigate('/', { replace: true });
+        navigate('/courses', { replace: true });
       } else {
         throw new Error('Login failed. Please check your credentials.');
       }
