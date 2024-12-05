@@ -175,6 +175,32 @@
           "required": false
         }
       ]
+    },
+    {
+      "name": "settings",
+      "type": "base",
+      "system": false,
+      "listRule": "true",
+      "viewRule": "true",
+      "createRule": "@request.auth.role = 'admin'",
+      "updateRule": "@request.auth.role = 'admin'",
+      "deleteRule": "@request.auth.role = 'admin'",
+      "options": {
+        "allowApiListRule": true,
+        "allowApiViewRule": true
+      },
+      "schema": [
+        {
+          "name": "privacy_policy",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "privacy_policy_last_updated",
+          "type": "date",
+          "required": false
+        }
+      ]
     }
   ]
 }

@@ -31,10 +31,10 @@ export function CourseHeader({ course }: CourseHeaderProps) {
                 <span className="capitalize">{course.level}</span>
               </div>
             )}
-            {course.instructor && (
+            {course.expand?.instructor && (
               <div className="flex items-center text-white/60">
                 <BookOpen className="w-4 h-4 mr-2 text-indigo-400/80" />
-                <span>By {course.expand?.instructor?.username || 'Unknown'}</span>
+                <span>By {course.expand.instructor.name || 'Unknown'}</span>
               </div>
             )}
           </div>

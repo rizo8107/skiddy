@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { pb } from '../lib/pocketbase';
-import { Send, Loader2, HelpCircle, Mail, MessageSquare } from 'lucide-react';
+import { Send, Loader2, HelpCircle, Mail } from 'lucide-react';
 
 const SupportPage: React.FC = () => {
   const [subject, setSubject] = useState('');
@@ -47,17 +47,12 @@ const SupportPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Support Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        {/* Support Info */}
+        <div className="mb-12">
           <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
             <Mail className="w-8 h-8 text-indigo-400/80 mb-4" />
             <h3 className="text-lg font-semibold text-white/90 mb-2">Email Support</h3>
-            <p className="text-white/70">Get help via email with detailed responses to your inquiries.</p>
-          </div>
-          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
-            <MessageSquare className="w-8 h-8 text-indigo-400/80 mb-4" />
-            <h3 className="text-lg font-semibold text-white/90 mb-2">Live Chat</h3>
-            <p className="text-white/70">Chat with our support team for quick responses during business hours.</p>
+            <p className="text-white/70">Get help via email with detailed responses to your inquiries. Our support team typically responds within 24 hours.</p>
           </div>
         </div>
 
@@ -110,7 +105,7 @@ const SupportPage: React.FC = () => {
                 className="w-full px-4 py-3 bg-black/40 text-white/90 rounded-lg border border-white/10
                          focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 
                          placeholder-white/30 transition-colors"
-                placeholder="What's this about?"
+                placeholder="How can we help?"
               />
             </div>
 
@@ -127,27 +122,25 @@ const SupportPage: React.FC = () => {
                 className="w-full px-4 py-3 bg-black/40 text-white/90 rounded-lg border border-white/10
                          focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 
                          placeholder-white/30 transition-colors"
-                placeholder="Tell us what's on your mind..."
+                placeholder="Please describe your issue or feedback..."
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center gap-2 px-6 py-3 
-                       bg-indigo-500/90 hover:bg-indigo-500/80 text-white/90 rounded-lg
-                       transition-colors duration-200 disabled:opacity-50 focus:outline-none 
-                       focus:ring-2 focus:ring-indigo-500/30"
+              className="w-full flex justify-center items-center px-6 py-3 bg-indigo-500/80 hover:bg-indigo-500/90
+                       text-white font-medium rounded-lg transition-colors disabled:opacity-50"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Sending...</span>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Sending...
                 </>
               ) : (
                 <>
-                  <Send className="w-5 h-5" />
-                  <span>Send Message</span>
+                  <Send className="w-5 h-5 mr-2" />
+                  Send Message
                 </>
               )}
             </button>

@@ -71,7 +71,10 @@ export interface Enrollment extends Record {
 }
 
 export interface Settings extends Record {
-    // Add settings properties here
+    site_logo: string;
+    site_name: string;
+    privacy_policy: string;
+    privacy_policy_last_updated: string;
 }
 
 // Error Handling
