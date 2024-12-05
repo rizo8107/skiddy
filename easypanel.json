@@ -9,14 +9,26 @@
       },
       "env": {
         "NODE_ENV": "production",
-        "VITE_POCKETBASE_URL": "https://skiddy-pocketbase.9dto0s.easypanel.host"
+        "VITE_POCKETBASE_URL": "https://skiddy-pocketbase.9dto0s.easypanel.host",
+        "PORT": "3000",
+        "HOST": "0.0.0.0"
       },
       "mounts": {
-        "data": "/app/data"
+        "data": "/app/data",
+        "uploads": "/app/uploads"
       },
       "deploy": {
         "command": "npm start",
-        "port": 3000
+        "port": 3000,
+        "resources": {
+          "memory": "512M",
+          "cpu": 0.5
+        },
+        "healthCheck": {
+          "path": "/",
+          "port": 3000
+        },
+        "replicas": 1
       }
     }
   }
