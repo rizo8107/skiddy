@@ -12,7 +12,6 @@ import CoursesPage from './pages/CoursesPage';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
-import SupportPage from './pages/SupportPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 // Components
@@ -74,14 +73,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             {isAdmin() ? <SettingsPage /> : <Navigate to="/courses" replace />}
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'support',
-        element: (
-          <ProtectedRoute>
-            <SupportPage />
           </ProtectedRoute>
         ),
       },

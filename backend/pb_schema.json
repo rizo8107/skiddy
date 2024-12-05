@@ -201,6 +201,76 @@
           "required": false
         }
       ]
+    },
+    {
+      "name": "support_tickets",
+      "type": "base",
+      "system": false,
+      "listRule": "@request.auth.id != ''",
+      "viewRule": "@request.auth.id = user.id || @request.auth.role = 'admin'",
+      "createRule": "@request.auth.id != ''",
+      "updateRule": "@request.auth.id = user.id || @request.auth.role = 'admin'",
+      "deleteRule": "@request.auth.role = 'admin'",
+      "options": {
+        "allowApiListRule": true,
+        "allowApiViewRule": true
+      },
+      "indexes": ["CREATE INDEX idx_ticket_status ON support_tickets (status)"],
+      "schema": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "users",
+            "cascadeDelete": true,
+            "maxSelect": 1
+          }
+        },
+        {
+          "name": "subject",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "message",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "options": {
+            "maxSelect": 1,
+            "values": ["open", "in_progress", "resolved", "closed"]
+          }
+        },
+        {
+          "name": "priority",
+          "type": "select",
+          "required": true,
+          "options": {
+            "maxSelect": 1,
+            "values": ["low", "medium", "high", "urgent"]
+          }
+        },
+        {
+          "name": "attachments",
+          "type": "file",
+          "required": false,
+          "options": {
+            "maxSelect": 5,
+            "maxSize": 5242880,
+            "mimeTypes": ["image/jpg", "image/jpeg", "image/png", "application/pdf"]
+          }
+        },
+        {
+          "name": "admin_notes",
+          "type": "text",
+          "required": false
+        }
+      ]
     }
   ]
 }
