@@ -77,6 +77,21 @@ export interface Settings extends Record {
     privacy_policy_last_updated: string;
 }
 
+export interface TermsAcceptance extends Record {
+    user: string;
+    accepted_at: string;
+    terms_version: string;
+}
+
+export interface Contact extends Record {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    status: 'pending' | 'responded' | 'closed';
+    user?: string;
+}
+
 // Error Handling
 const handlePocketbaseError = (error: unknown) => {
     if (error instanceof ClientResponseError) {
@@ -510,6 +525,77 @@ export const settingsService = {
             throw error;
         }
     },
+};
+
+// Terms Acceptance Service
+export const termsService = {
+    async getAcceptanceStatus(userId: string): Promise<TermsAcceptance | null> {
+        try {
+            const record = await pb
+                .collection('terms_acceptance')
+                .getFirstListItem(`user="${userId}"`, {
+                    sort: '-created',
+                });
+            return record as TermsAcceptance;
+        } catch (error) {
+            if ((error as ClientResponseError).status === 404) {
+                return null;
+            }
+            throw error;
+        }
+    },
+
+    async acceptTerms(userId: string, version: string): Promise<TermsAcceptance> {
+        try {
+            const data = {
+                user: userId,
+                accepted_at: new Date().toISOString(),
+                terms_version: version
+            };
+            const record = await pb.collection('terms_acceptance').create(data);
+            return record as TermsAcceptance;
+        } catch (error) {
+            handlePocketbaseError(error);
+            throw error;
+        }
+    }
+};
+
+// Contact Service
+export const contactService = {
+    async submitContact(data: Omit<Contact, 'id' | 'created' | 'updated' | 'collectionId' | 'collectionName'>): Promise<Contact> {
+        try {
+            const userId = pb.authStore.model?.id;
+            const contactData = {
+                ...data,
+                status: 'pending',
+                user: userId || undefined
+            };
+            
+            const record = await pb.collection('contact_messages').create(contactData);
+            return record as Contact;
+        } catch (error) {
+            handlePocketbaseError(error);
+            throw error;
+        }
+    },
+
+    async getContactHistory(): Promise<Contact[]> {
+        try {
+            const userId = pb.authStore.model?.id;
+            if (!userId) throw new Error('User not authenticated');
+
+            const records = await pb.collection('contact_messages').getList(1, 50, {
+                filter: `user = "${userId}"`,
+                sort: '-created'
+            });
+            
+            return records.items as Contact[];
+        } catch (error) {
+            handlePocketbaseError(error);
+            throw error;
+        }
+    }
 };
 
 // Authentication

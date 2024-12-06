@@ -13,6 +13,8 @@ import CourseDetailsPage from './pages/CourseDetailsPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
+import ContactUsPage from './pages/ContactUsPage';
 
 // Components
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -21,8 +23,7 @@ import { pb, isAdmin } from './lib/pocketbase';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
+      refetchOnWindowFocus: false,
     },
   },
 });
@@ -53,7 +54,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'course/:courseId',
+        path: 'course/:id',
         element: (
           <ProtectedRoute>
             <CourseDetailsPage />
@@ -80,20 +81,19 @@ const router = createBrowserRouter([
         path: 'privacy-policy',
         element: <PrivacyPolicyPage />,
       },
+      {
+        path: 'terms-and-conditions',
+        element: <TermsAndConditionsPage />,
+      },
+      {
+        path: 'contact-us',
+        element: <ContactUsPage />,
+      },
     ],
   },
-], {
-  future: {
-    v7_startTransition: true,
-    v7_fetcherPersist: true,
-    v7_normalizeFormMethod: true,
-    v7_partialHydration: true,
-    v7_skipActionErrorRevalidation: true,
-    v7_relativeSplatPath: true,
-  },
-});
+]);
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

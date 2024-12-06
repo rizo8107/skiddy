@@ -6,10 +6,11 @@ import ProfilePage from './pages/ProfilePage';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 import SupportPage from './pages/SupportPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { pb } from './lib/pocketbase';
 
-export const router = createBrowserRouter([
+const routes = [
   {
     path: '/login',
     element: <LoginPage />,
@@ -58,6 +59,12 @@ export const router = createBrowserRouter([
         path: 'privacy-policy',
         element: <PrivacyPolicyPage />,
       },
+      {
+        path: 'terms-and-conditions',
+        element: <TermsAndConditionsPage />,
+      },
     ],
   },
-]);
+];
+
+export const router = createBrowserRouter(routes);

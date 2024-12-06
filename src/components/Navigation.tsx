@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { logout, pb } from '../lib/pocketbase';
 import { Logo } from './Logo';
-import { User, LogOut, Shield } from 'lucide-react';
+import { User, LogOut, Shield, ScrollText, Contact } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 export function Navigation() {
@@ -69,6 +69,24 @@ export function Navigation() {
                   >
                     <Shield className="w-5 h-5 text-indigo-400/80" />
                     <span>Privacy Policy</span>
+                  </DropdownMenu.Item>
+
+                  <DropdownMenu.Item 
+                    onSelect={() => navigate('/terms-and-conditions')}
+                    className="flex items-center gap-3 px-3 py-2.5 text-base text-white/90 focus:text-white 
+                             hover:bg-white/5 focus:bg-white/5 rounded-lg cursor-pointer outline-none"
+                  >
+                    <ScrollText className="w-5 h-5 text-indigo-400/80" />
+                    <span>Terms & Conditions</span>
+                  </DropdownMenu.Item>
+
+                  <DropdownMenu.Item 
+                    onSelect={() => navigate('/contact-us')}
+                    className="flex items-center gap-3 px-3 py-2.5 text-base text-white/90 focus:text-white 
+                             hover:bg-white/5 focus:bg-white/5 rounded-lg cursor-pointer outline-none"
+                  >
+                    <Contact className="w-5 h-5 text-indigo-400/80" />
+                    <span>Contact Us</span>
                   </DropdownMenu.Item>
 
                   <DropdownMenu.Separator className="my-1 border-t border-white/10" />

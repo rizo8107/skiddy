@@ -10,6 +10,9 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
+import { useNavigate } from "react-router-dom";
+import { Shield } from '../ui/icons/Shield';
+import { ScrollText } from '../ui/icons/ScrollText';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -22,6 +25,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 export default function ProfileForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { currentUser, updateProfile } = useUserStore();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -118,6 +122,22 @@ export default function ProfileForm() {
         <Card>
           <CardContent className="pt-6">
             <SupportAndFeedback />
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => navigate("/privacy-policy")}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Privacy Policy
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => navigate("/terms-and-conditions")}
+            >
+              <ScrollText className="mr-2 h-4 w-4" />
+              Terms and Conditions
+            </Button>
           </CardContent>
         </Card>
       </TabsContent>
