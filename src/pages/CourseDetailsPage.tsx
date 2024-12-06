@@ -10,20 +10,41 @@ import { courseService, lessonService, Course, Lesson } from '../lib/pocketbase'
 import { Loader2 } from 'lucide-react';
 
 export default function CourseDetailsPage() {
-  const { courseId } = useParams<{ courseId: string }>();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null);
 
-  const { data: course, isLoading: isCourseLoading } = useQuery({
-    queryKey: ['course', courseId],
-    queryFn: () => courseId ? courseService.getOne(courseId) : null,
-    enabled: !!courseId,
+  const { data: course, isLoading: isCourseLoading, error: courseError } = useQuery({
+    queryKey: ['course', id],
+    queryFn: async () => {
+      if (!id) throw new Error('Course ID is required');
+      try {
+        const course = await courseService.getOne(id);
+        if (!course) throw new Error('Course not found');
+        return course;
+      } catch (error) {
+        console.error('Error loading course:', error);
+        throw error;
+      }
+    },
+    enabled: !!id,
+    retry: 1,
   });
 
-  const { data: lessons = [], isLoading: isLessonsLoading } = useQuery({
-    queryKey: ['lessons', courseId],
-    queryFn: () => courseId ? lessonService.getAll(courseId) : [],
-    enabled: !!courseId,
+  const { data: lessons = [], isLoading: isLessonsLoading, error: lessonsError } = useQuery({
+    queryKey: ['lessons', id],
+    queryFn: async () => {
+      if (!id) throw new Error('Course ID is required');
+      try {
+        const lessons = await lessonService.getAll(id);
+        return lessons;
+      } catch (error) {
+        console.error('Error loading lessons:', error);
+        throw error;
+      }
+    },
+    enabled: !!id && !!course,
+    retry: 1,
   });
 
   useEffect(() => {
@@ -32,15 +53,15 @@ export default function CourseDetailsPage() {
     }
   }, [lessons, currentLesson]);
 
-  if (!courseId) {
+  if (!id) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e] flex items-center justify-center">
-        <div className="text-center space-y-4 max-w-md mx-auto">
-          <h2 className="text-xl font-semibold text-white/90">Course ID Required</h2>
+      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+        <div className="text-center space-y-6 max-w-md mx-auto bg-[#1a1f2e] rounded-lg p-8 border border-white/10">
+          <h2 className="text-2xl font-semibold text-white">Course ID Required</h2>
           <p className="text-base text-white/70">Please provide a valid course ID to view the content.</p>
           <button
             onClick={() => navigate('/courses')}
-            className="text-indigo-400/90 hover:text-indigo-400 transition-colors"
+            className="w-full px-4 py-3 text-base font-medium text-white bg-[#4f46e5] hover:bg-[#4338ca] rounded-lg transition-colors duration-200 shadow-lg shadow-indigo-500/20"
           >
             Return to courses
           </button>
@@ -51,26 +72,45 @@ export default function CourseDetailsPage() {
 
   if (isCourseLoading || isLessonsLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="w-8 h-8 text-indigo-500/90 animate-spin mx-auto" />
+          <Loader2 className="w-8 h-8 text-[#4f46e5] animate-spin mx-auto" />
           <p className="text-sm text-white/50">Loading course content...</p>
         </div>
       </div>
     );
   }
 
-  if (!course) {
+  if (courseError || !course) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e] flex items-center justify-center">
-        <div className="text-center space-y-4 max-w-md mx-auto">
-          <h2 className="text-xl font-semibold text-white/90">Course Not Found</h2>
+      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+        <div className="text-center space-y-6 max-w-md mx-auto bg-[#1a1f2e] rounded-lg p-8 border border-white/10">
+          <h2 className="text-2xl font-semibold text-white">Course Not Found</h2>
           <p className="text-base text-white/70">
             The course you're looking for doesn't exist or has been removed.
           </p>
           <button
             onClick={() => navigate('/courses')}
-            className="text-indigo-400/90 hover:text-indigo-400 transition-colors"
+            className="w-full px-4 py-3 text-base font-medium text-white bg-[#4f46e5] hover:bg-[#4338ca] rounded-lg transition-colors duration-200 shadow-lg shadow-indigo-500/20"
+          >
+            Return to courses
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (lessonsError) {
+    return (
+      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+        <div className="text-center space-y-6 max-w-md mx-auto bg-[#1a1f2e] rounded-lg p-8 border border-white/10">
+          <h2 className="text-2xl font-semibold text-white">Error Loading Lessons</h2>
+          <p className="text-base text-white/70">
+            An error occurred while loading lessons for this course.
+          </p>
+          <button
+            onClick={() => navigate('/courses')}
+            className="w-full px-4 py-3 text-base font-medium text-white bg-[#4f46e5] hover:bg-[#4338ca] rounded-lg transition-colors duration-200 shadow-lg shadow-indigo-500/20"
           >
             Return to courses
           </button>
@@ -80,7 +120,7 @@ export default function CourseDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e]">
+    <div className="min-h-screen bg-[#0f1117]">
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <CourseHeader course={course} />
         
@@ -89,7 +129,7 @@ export default function CourseDetailsPage() {
           <div className="lg:col-span-8 space-y-6">
             {currentLesson ? (
               <>
-                <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
+                <div className="bg-[#1a1f2e] rounded-xl overflow-hidden">
                   <VideoPlayer
                     lessons_title={currentLesson.lessons_title}
                     videoUrl={currentLesson.videoUrl}
@@ -97,14 +137,14 @@ export default function CourseDetailsPage() {
                 </div>
               </>
             ) : (
-              <div className="aspect-video bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl 
+              <div className="aspect-video bg-[#1a1f2e] rounded-xl 
                            flex items-center justify-center">
                 <p className="text-sm sm:text-base text-white/50">Select a lesson to start learning</p>
               </div>
             )}
             
             {/* Lesson List for Mobile */}
-            <div className="lg:hidden bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl">
+            <div className="lg:hidden bg-[#1a1f2e] rounded-xl">
               <LessonList
                 lessons={lessons}
                 currentLesson={currentLesson}
@@ -119,14 +159,14 @@ export default function CourseDetailsPage() {
           <div className="lg:col-span-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 sm:gap-8">
               {/* Lesson List for Desktop */}
-              <div className="hidden lg:block bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl">
+              <div className="hidden lg:block bg-[#1a1f2e] rounded-xl">
                 <LessonList
                   lessons={lessons}
                   currentLesson={currentLesson}
                   onSelectLesson={setCurrentLesson}
                 />
               </div>
-              <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl">
+              <div className="bg-[#1a1f2e] rounded-xl">
                 <ReviewList courseId={course.id} />
               </div>
             </div>
