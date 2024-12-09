@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { pb, isAdmin, settingsService } from '../lib/pocketbase';
 import { Upload, Loader2, Shield } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
+import { Navigation } from '../components/Navigation';
+import { NotificationTest } from '../components/NotificationTest';
 
 interface Settings {
   id: string;
@@ -80,107 +82,119 @@ const SettingsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Site Settings</h1>
-          <p className="mt-2 text-lg text-gray-400">
-            Manage your site's general settings and configurations
-          </p>
+    <div className="min-h-screen bg-[#0f1117]">
+      <Navigation />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
+        
+        {/* Notification Test Section */}
+        <div className="bg-[#1a1f2e] rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">Notification Settings</h2>
+          <p className="text-gray-400 mb-4">Test push notifications for your device.</p>
+          <NotificationTest />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8 bg-white/10 backdrop-blur-md rounded-lg p-6">
-          {/* Site Logo Section */}
-          <div>
-            <h2 className="text-xl font-semibold text-white mb-4">Site Logo</h2>
-            <div className="flex items-center space-x-4">
-              {settings?.site_logo && (
-                <img
-                  src={pb.getFileUrl(settings, settings.site_logo)}
-                  alt="Site Logo"
-                  className="h-16 w-16 object-contain rounded-lg bg-white/20"
-                />
-              )}
-              <label className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md cursor-pointer">
-                <Upload className="w-5 h-5 text-white mr-2" />
-                <span className="text-white">Upload Logo</span>
-                <input
-                  type="file"
-                  onChange={handleLogoChange}
-                  accept="image/*"
-                  className="hidden"
-                />
-              </label>
-            </div>
-          </div>
-
-          {/* Site Name Section */}
-          <div>
-            <h2 className="text-xl font-semibold text-white mb-4">Site Name</h2>
-            <input
-              type="text"
-              value={siteName}
-              onChange={(e) => setSiteName(e.target.value)}
-              className="w-full px-4 py-2 bg-white/10 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter site name"
-            />
-          </div>
-
-          {/* Privacy Policy Section */}
-          <div>
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-              <Shield className="w-5 h-5 mr-2" />
-              Privacy Policy
-            </h2>
-            <textarea
-              value={privacyPolicy}
-              onChange={(e) => setPrivacyPolicy(e.target.value)}
-              rows={20}
-              className="w-full px-4 py-2 bg-white/10 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your privacy policy text here..."
-            />
-            <p className="mt-2 text-sm text-gray-400">
-              Last updated: {settings?.privacy_policy_last_updated 
-                ? new Date(settings.privacy_policy_last_updated).toLocaleDateString() 
-                : 'Never'}
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white">Site Settings</h1>
+            <p className="mt-2 text-lg text-gray-400">
+              Manage your site's general settings and configurations
             </p>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={updateMutation.isPending}
-            className="w-full flex justify-center items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {updateMutation.isPending ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Upload className="w-5 h-5 mr-2" />
-                Save Changes
-              </>
-            )}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-8 bg-white/10 backdrop-blur-md rounded-lg p-6">
+            {/* Site Logo Section */}
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-4">Site Logo</h2>
+              <div className="flex items-center space-x-4">
+                {settings?.site_logo && (
+                  <img
+                    src={pb.getFileUrl(settings, settings.site_logo)}
+                    alt="Site Logo"
+                    className="h-16 w-16 object-contain rounded-lg bg-white/20"
+                  />
+                )}
+                <label className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md cursor-pointer">
+                  <Upload className="w-5 h-5 text-white mr-2" />
+                  <span className="text-white">Upload Logo</span>
+                  <input
+                    type="file"
+                    onChange={handleLogoChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
 
-        {/* View Privacy Policy Link */}
-        <div className="mt-8 p-6 bg-white/10 backdrop-blur-md rounded-lg">
-          <h2 className="text-xl font-semibold text-white mb-4">View Privacy Policy</h2>
-          <p className="text-gray-300 mb-4">
-            Review the current privacy policy as it appears to users.
-          </p>
-          <a
-            href="/privacy-policy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
-          >
-            <Shield className="w-5 h-5 mr-2" />
-            View Privacy Policy
-          </a>
+            {/* Site Name Section */}
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-4">Site Name</h2>
+              <input
+                type="text"
+                value={siteName}
+                onChange={(e) => setSiteName(e.target.value)}
+                className="w-full px-4 py-2 bg-white/10 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter site name"
+              />
+            </div>
+
+            {/* Privacy Policy Section */}
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <Shield className="w-5 h-5 mr-2" />
+                Privacy Policy
+              </h2>
+              <textarea
+                value={privacyPolicy}
+                onChange={(e) => setPrivacyPolicy(e.target.value)}
+                rows={20}
+                className="w-full px-4 py-2 bg-white/10 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter your privacy policy text here..."
+              />
+              <p className="mt-2 text-sm text-gray-400">
+                Last updated: {settings?.privacy_policy_last_updated 
+                  ? new Date(settings.privacy_policy_last_updated).toLocaleDateString() 
+                  : 'Never'}
+              </p>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={updateMutation.isPending}
+              className="w-full flex justify-center items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              {updateMutation.isPending ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-5 h-5 mr-2" />
+                  Save Changes
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* View Privacy Policy Link */}
+          <div className="mt-8 p-6 bg-white/10 backdrop-blur-md rounded-lg">
+            <h2 className="text-xl font-semibold text-white mb-4">View Privacy Policy</h2>
+            <p className="text-gray-300 mb-4">
+              Review the current privacy policy as it appears to users.
+            </p>
+            <a
+              href="/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+            >
+              <Shield className="w-5 h-5 mr-2" />
+              View Privacy Policy
+            </a>
+          </div>
         </div>
       </div>
     </div>

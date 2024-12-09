@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { logout, pb } from '../lib/pocketbase';
+import { logout, pb, isAdmin } from '../lib/pocketbase';
 import { Logo } from './Logo';
-import { User, LogOut, Shield, ScrollText, Contact } from 'lucide-react';
+import { User, LogOut, Shield, ScrollText, Contact, Settings } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 export function Navigation() {
@@ -61,6 +61,17 @@ export function Navigation() {
                     <User className="w-5 h-5 text-indigo-400/80" />
                     <span>Profile</span>
                   </DropdownMenu.Item>
+
+                  {isAdmin() && (
+                    <DropdownMenu.Item 
+                      onSelect={() => navigate('/settings')}
+                      className="flex items-center gap-3 px-3 py-2.5 text-base text-white/90 focus:text-white 
+                               hover:bg-white/5 focus:bg-white/5 rounded-lg cursor-pointer outline-none"
+                    >
+                      <Settings className="w-5 h-5 text-indigo-400/80" />
+                      <span>Settings</span>
+                    </DropdownMenu.Item>
+                  )}
 
                   <DropdownMenu.Item 
                     onSelect={() => navigate('/privacy-policy')}

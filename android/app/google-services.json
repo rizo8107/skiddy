@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "634302486948",
+    "project_id": "skiddy-c32ea",
+    "storage_bucket": "skiddy-c32ea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634302486948:android:47f4b5cfb070fc67a94931",
+        "android_client_info": {
+          "package_name": "com.skiddy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb1LVO9zoLyXyQIF19sqLEDD9wp9iiRLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

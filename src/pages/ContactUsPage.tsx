@@ -4,7 +4,7 @@ import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Button } from "../components/ui/button";
 import { useToast } from "../components/ui/use-toast";
-import { Mail, Clock, Send, MessageSquare } from "lucide-react";
+import { Mail, Clock, Send, MessageSquare, Phone } from "lucide-react";
 import { contactService } from "../lib/pocketbase";
 import { ScrollArea } from "../components/ui/scroll-area";
 
@@ -207,8 +207,18 @@ function ContactUsPage() {
                   <Mail className="w-6 h-6 text-indigo-400 mt-1" />
                   <div>
                     <h3 className="font-medium text-white mb-1">Email</h3>
-                    <a href="mailto:support@skiddy.com" className="text-gray-400 hover:text-indigo-400 transition-colors">
-                      support@skiddy.com
+                    <a href="mailto:support@skiddy.in" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                      support@skiddy.in
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <Phone className="w-6 h-6 text-indigo-400 mt-1" />
+                  <div>
+                    <h3 className="font-medium text-white mb-1">Phone</h3>
+                    <a href="tel:+919566067565" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                      +91 95660 67565
                     </a>
                   </div>
                 </div>
@@ -219,7 +229,7 @@ function ContactUsPage() {
                     <h3 className="font-medium text-white mb-1">Business Hours</h3>
                     <p className="text-gray-400">
                       Monday - Friday<br />
-                      9:00 AM - 6:00 PM EST
+                      9:00 AM - 6:00 PM IST
                     </p>
                   </div>
                 </div>
