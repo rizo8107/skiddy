@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { pb, login } from '../lib/pocketbase';
 import { Loader2, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -97,6 +98,29 @@ export default function LoginPage() {
             />
           </div>
 
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-white/70">
+                Remember me
+              </label>
+            </div>
+
+            <div className="text-sm">
+              <Link
+                to="/forgot-password"
+                className="font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={isLoading}
@@ -111,12 +135,6 @@ export default function LoginPage() {
               'Login'
             )}
           </button>
-
-          <div className="text-center">
-            <a href="#" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
-              Forgot password?
-            </a>
-          </div>
         </form>
       </div>
     </div>

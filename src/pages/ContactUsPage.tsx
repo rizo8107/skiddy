@@ -207,8 +207,8 @@ function ContactUsPage() {
                   <Mail className="w-6 h-6 text-indigo-400 mt-1" />
                   <div>
                     <h3 className="font-medium text-white mb-1">Email</h3>
-                    <a href="mailto:support@skiddy.in" className="text-gray-400 hover:text-indigo-400 transition-colors">
-                      support@skiddy.in
+                    <a href="mailto:contact@skiddy.in" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                      contact@skiddy.in
                     </a>
                   </div>
                 </div>

@@ -6,28 +6,78 @@ import { LessonList } from '../components/LessonList';
 import { CourseHeader } from '../components/CourseHeader';
 import { LessonDetails } from '../components/LessonDetails';
 import { ReviewList } from '../components/ReviewList';
-import { courseService, lessonService, Course, Lesson } from '../lib/pocketbase';
+import { pb } from '../lib/pocketbase';
 import { Loader2 } from 'lucide-react';
+import type { Course, Lesson } from '../types';
 
 export default function CourseDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null);
 
+  // First check if user has access to this course
+  const { data: hasAccess, isLoading: isAccessLoading } = useQuery({
+    queryKey: ['courseAccess', id],
+    queryFn: async () => {
+      if (!id) return false;
+      const userId = pb.authStore.model?.id;
+      if (!userId) return false;
+
+      console.log('Checking course access for user:', userId, 'course:', id);
+
+      try {
+        // Get the user record with expanded course access
+        const user = await pb.collection('users').getOne(userId, {
+          expand: 'course_access'
+        });
+
+        console.log('User data:', user);
+
+        if (!user.course_access) {
+          console.log('No course access found for user');
+          return false;
+        }
+
+        // Check if the course ID is in the user's course_access
+        const accessibleCourseIds = Array.isArray(user.course_access) 
+          ? user.course_access 
+          : [user.course_access];
+
+        const hasAccess = accessibleCourseIds.includes(id);
+        console.log('Has access:', hasAccess, 'Course IDs:', accessibleCourseIds);
+        return hasAccess;
+      } catch (error) {
+        console.error('Error checking course access:', error);
+        return false;
+      }
+    },
+    enabled: !!id,
+  });
+
+  // Redirect if no access
+  useEffect(() => {
+    if (!isAccessLoading && hasAccess === false) {
+      console.log('No access to course, redirecting to courses page');
+      navigate('/courses');
+    }
+  }, [hasAccess, isAccessLoading, navigate]);
+
   const { data: course, isLoading: isCourseLoading, error: courseError } = useQuery({
     queryKey: ['course', id],
     queryFn: async () => {
       if (!id) throw new Error('Course ID is required');
       try {
-        const course = await courseService.getOne(id);
-        if (!course) throw new Error('Course not found');
-        return course;
+        const record = await pb.collection('courses').getOne(id, {
+          expand: 'instructor',
+        });
+        if (!record) throw new Error('Course not found');
+        return record;
       } catch (error) {
         console.error('Error loading course:', error);
         throw error;
       }
     },
-    enabled: !!id,
+    enabled: !!id && hasAccess === true,
     retry: 1,
   });
 
@@ -36,14 +86,17 @@ export default function CourseDetailsPage() {
     queryFn: async () => {
       if (!id) throw new Error('Course ID is required');
       try {
-        const lessons = await lessonService.getAll(id);
-        return lessons;
+        const records = await pb.collection('lessons').getFullList({
+          filter: `course="${id}"`,
+          sort: 'order',
+        });
+        return records;
       } catch (error) {
         console.error('Error loading lessons:', error);
         throw error;
       }
     },
-    enabled: !!id && !!course,
+    enabled: !!id && !!course && hasAccess === true,
     retry: 1,
   });
 
@@ -70,7 +123,7 @@ export default function CourseDetailsPage() {
     );
   }
 
-  if (isCourseLoading || isLessonsLoading) {
+  if (isAccessLoading || isCourseLoading || isLessonsLoading) {
     return (
       <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -128,14 +181,12 @@ export default function CourseDetailsPage() {
           {/* Main Content Area */}
           <div className="lg:col-span-8 space-y-6">
             {currentLesson ? (
-              <>
-                <div className="bg-[#1a1f2e] rounded-xl overflow-hidden">
-                  <VideoPlayer
-                    lessons_title={currentLesson.lessons_title}
-                    videoUrl={currentLesson.videoUrl}
-                  />
-                </div>
-              </>
+              <div className="bg-[#1a1f2e] rounded-xl overflow-hidden">
+                <VideoPlayer
+                  lessons_title={currentLesson.lessons_title}
+                  videoUrl={currentLesson.videoUrl}
+                />
+              </div>
             ) : (
               <div className="aspect-video bg-[#1a1f2e] rounded-xl 
                            flex items-center justify-center">

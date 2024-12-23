@@ -6,16 +6,65 @@ import { Loader2, BookOpen, Clock, Signal, User } from 'lucide-react';
 import type { Course } from '../types';
 
 export default function CoursesPage() {
-  const { data: coursesData, isLoading } = useQuery({
+  const { data: coursesData, isLoading, error } = useQuery({
     queryKey: ['courses'],
     queryFn: async () => {
-      const records = await pb.collection('courses').getList(1, 50, {
-        expand: 'instructor',
-        sort: '-created',
-      });
-      return records;
+      const userId = pb.authStore.model?.id;
+      if (!userId) {
+        console.log('No user ID found');
+        return { items: [] };
+      }
+
+      console.log('Fetching courses for user:', userId);
+
+      try {
+        // Get the user record with expanded course access
+        const user = await pb.collection('users').getOne(userId, {
+          expand: 'course_access'
+        });
+
+        console.log('User data:', user);
+
+        if (!user.course_access) {
+          console.log('No course access found for user');
+          return { items: [] };
+        }
+
+        // Get the course IDs from the user's course_access field
+        const accessibleCourseIds = Array.isArray(user.course_access) 
+          ? user.course_access 
+          : [user.course_access];
+
+        console.log('Accessible course IDs:', accessibleCourseIds);
+
+        if (accessibleCourseIds.length === 0) {
+          console.log('No accessible courses found');
+          return { items: [] };
+        }
+
+        // Build the filter for multiple course IDs
+        const filter = accessibleCourseIds.map(id => `id = "${id}"`).join(' || ');
+        console.log('Course filter:', filter);
+
+        // Fetch only the courses that the user has access to
+        const records = await pb.collection('courses').getList(1, 50, {
+          filter: filter,
+          expand: 'instructor',
+          sort: '-created',
+        });
+
+        console.log('Found courses:', records.items);
+        return records;
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        throw error;
+      }
     },
   });
+
+  if (error) {
+    console.error('Query error:', error);
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1f2e] via-[#14171f] to-[#1a1f2e] px-4 py-8">

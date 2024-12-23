@@ -8,6 +8,9 @@ import App from './App';
 // Pages
 import RootLayout from './layouts/RootLayout';
 import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import AdminSettingsPage from './pages/AdminSettingsPage';
 import CoursesPage from './pages/CoursesPage';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 import ProfilePage from './pages/ProfilePage';
@@ -32,6 +35,22 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPasswordPage />,
+  },
+  {
+    path: '/admin/settings',
+    element: (
+      <ProtectedRoute>
+        <AdminSettingsPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/',
