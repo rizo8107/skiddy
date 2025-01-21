@@ -161,7 +161,7 @@ export default function ContactUsPage() {
                       Our support team is available Monday through Friday from 9:00 AM to 6:00 PM IST.
                       For urgent inquiries outside business hours, please email us at{' '}
                       <a href="mailto:support@skiddy.in" className="text-indigo-400 hover:text-indigo-300">
-                        support@skiddy.in
+                        contact@skiddy.in
                       </a>
                     </p>
                   </div>
