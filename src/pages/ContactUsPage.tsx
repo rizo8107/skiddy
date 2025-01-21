@@ -131,7 +131,7 @@ export default function ContactUsPage() {
                     <Phone className="w-6 h-6 text-indigo-400 mt-1" />
                     <div>
                       <h3 className="font-medium text-white mb-1">Phone</h3>
-                      <a href="tel:+919876543210" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                      <a href="tel:+919566067565" className="text-gray-400 hover:text-indigo-400 transition-colors">
                         +91 98765 43210
                       </a>
                       <p className="text-sm text-gray-500 mt-1">
@@ -146,10 +146,10 @@ export default function ContactUsPage() {
                     <div>
                       <h3 className="font-medium text-white mb-1">Office Address</h3>
                       <p className="text-gray-400">
-                        Skiddy Learning Solutions<br />
-                        123 Tech Park, 2nd Floor<br />
-                        Bangalore, Karnataka 560001<br />
-                        India
+                        TSMC Creations India Pvt. Ltd.<br />
+                       12th Floor, Prince Infocity 1 <br />
+                        Kandanchavadi<br />
+                        OMR, Chennai -600096
                       </p>
                     </div>
                   </div>
